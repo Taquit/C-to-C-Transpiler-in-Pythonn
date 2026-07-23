@@ -1,0 +1,33 @@
+using System;
+
+namespace MiAplicacion
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("¡Hola, mundo!");
+            float luz  = 1.4;
+            int r;
+            if ( luz == 1.4 ) { 
+                int r;
+                Console.WriteLine("Luz es 1.4");
+            }else{
+                int rubenn = 0;
+            }
+
+            for(int i = 0;i<5;i++){
+                Console.WriteLine("Iteracion");
+            }
+            Console.WriteLine("Fin del programa.");
+
+            while(luz == 1.4){
+                
+                luz = 1;
+                Console.WriteLine("Luz es 1.4");
+            }
+        }
+    }
+}
+
+
