@@ -1,22 +1,22 @@
-class ASTNode:
+class ASTNodo:
     pass
 
-class ProgramNode(ASTNode):
+class ProgramNodo(ASTNodo):
     def __init__(self):
         self.statements = []
         
     def __repr__(self):
-        return f"ProgramNode({self.statements})"
+        return f"ProgramNodo({self.statements})"
 
-class PrintNode(ASTNode):
+class PrintNodo(ASTNodo):
     def __init__(self, value):
         self.value = value
 
     def __repr__(self):
-        return f"PrintNode({self.value})"
+        return f"PrintNodo({self.value})"
     
 
-class VarDeclarationNode(ASTNode):
+class VarDeclarationNodo(ASTNodo):
 
     def __init__(self,var_type,var_name,value):
         self.var_type = var_type
@@ -24,29 +24,29 @@ class VarDeclarationNode(ASTNode):
         self.value = value
 
     def __repr__(self):
-        return f"VarDeclarationNode({self.var_type},{self.var_name},{self.value})"
+        return f"VarDeclarationNodo({self.var_type},{self.var_name},{self.value})"
 
 
-class AssignationNode(ASTNode):
+class AssignationNodo(ASTNodo):
     def __init__(self, var_name, value):
         self.var_name = var_name
         self.value = value
 
     def __repr__(self):
-        return f"AssignationNode({self.var_name},{self.value})"
+        return f"AssignationNodo({self.var_name},{self.value})"
 
 
 
-class ConditionNode(ASTNode):
+class ConditionNodo(ASTNodo):
     def __init__(self,left,operator,right):
         self.left = left
         self.operator = operator
         self.right = right
 
     def __repr__(self):
-        return f"ConditionNode({self.left},{self.operator},{self.right})"
+        return f"ConditionNodo({self.left},{self.operator},{self.right})"
 
-class IncrementoNodo(ASTNode):
+class IncrementoNodo(ASTNodo):
     def __init__(self,left_value,operator,right_value):
         self.left_value = left_value
         self.operator = operator
@@ -56,7 +56,7 @@ class IncrementoNodo(ASTNode):
         return f"IncrementoNodo({self.left_value},{self.operator},{self.right_value})"
 
 
-class CaseNodo(ASTNode):
+class CaseNodo(ASTNodo):
     def __init__(self,value,statements):
         self.value = value
         self.statements = statements
@@ -67,7 +67,7 @@ class CaseNodo(ASTNode):
             repr_str += f"      {stmt}\n"
         return repr_str
 
-class DecisionNode(ASTNode):
+class DecisionNodo(ASTNodo):
     def __init__(self,type_decision,condition,true_block,false_block=None):
         self.type_decision = type_decision
         self.condition = condition
@@ -90,7 +90,7 @@ class DecisionNode(ASTNode):
             
         return repr_str
 
-class ForNode(ASTNode):
+class ForNodo(ASTNodo):
     def __init__(self, initialization, condition, increment, loop_block):
         self.initialization = initialization
         self.condition = condition
@@ -104,7 +104,7 @@ class ForNode(ASTNode):
         repr_str += "  }"
         return repr_str
 
-class WhileNode(ASTNode):
+class WhileNodo(ASTNodo):
     def __init__(self, condition, loop_block):
         self.condition = condition
         self.loop_block = loop_block
@@ -116,7 +116,7 @@ class WhileNode(ASTNode):
         repr_str += "  }"
         return repr_str
 
-class DoWhileNode(ASTNode):
+class DoWhileNodo(ASTNodo):
     def __init__(self,condition,loop_block):
         self.condition = condition
         self.loop_block = loop_block
@@ -128,7 +128,7 @@ class DoWhileNode(ASTNode):
         repr_str += f"  }} WHILE({self.condition})"
         return repr_str
 
-class SwitchNode(ASTNode):
+class SwitchNodo(ASTNodo):
     def __init__(self,variable,cases,default_block=None):
         self.variable = variable
         self.cases = cases
@@ -145,7 +145,7 @@ class SwitchNode(ASTNode):
         repr_str += "}"
         return repr_str
 
-class FunctionNode(ASTNode):
+class FunctionNodo(ASTNodo):
     def __init__(self, name, return_type, parameters, body):
         self.name = name
         self.return_type = return_type
@@ -160,7 +160,7 @@ class FunctionNode(ASTNode):
         repr_str += "}"
         return repr_str
 
-class FunctionCallNode(ASTNode):
+class FunctionCallNodo(ASTNodo):
     def __init__(self, name, arguments, is_statement=False):
         self.name = name
         self.arguments = arguments
@@ -170,7 +170,7 @@ class FunctionCallNode(ASTNode):
         args_str = ", ".join(map(str, self.arguments))
         return f"CALL {self.name}({args_str})"
 
-class ReturnNode(ASTNode):
+class ReturnNodo(ASTNodo):
     def __init__(self, value):
         self.value = value
 

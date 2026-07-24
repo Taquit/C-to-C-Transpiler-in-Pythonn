@@ -1,0 +1,61 @@
+#include <iostream>
+#include <string>
+
+void Saludar(std::string nombre, int iteraciones) {
+for (int i = 0; i<iteraciones; i++){
+std::cout << nombre << std::endl;
+}
+
+}
+
+int Sumar(int a, int b) {
+return a;
+}
+
+int main() {
+std::cout << "¡Hola, mundo!" << std::endl;
+Saludar("Ruben", 3);
+int resultado = Sumar(10, 20);
+if (resultado==30){
+std::cout << "La suma es correcta" << std::endl;
+}
+else {
+std::cout << "La suma es incorrecta" << std::endl;
+}
+
+float luz = 1.4f;
+if (luz==1.4f){
+std::cout << "Luz es 1.4" << std::endl;
+}
+else {
+int rubenn = 0;
+}
+
+for (int i = 0; i<5; i++){
+std::cout << "Iteracion" << std::endl;
+}
+
+std::cout << "Fin del programa." << std::endl;
+while (luz==1.4f){
+luz = 1;
+std::cout << "Luz es 1.4" << std::endl;
+}
+
+do {
+luz = 1;
+std::cout << "Luz es 1.4" << std::endl;
+} while(luz==1.4f)
+
+switch (luz) {
+case 1.5f:
+std::cout << "Luz es 1.4" << std::endl;
+break;
+
+default:
+std::cout << "Luz no es 1.4" << std::endl;
+break;
+}
+
+return 0;
+}
+

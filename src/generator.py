@@ -1,6 +1,6 @@
 class Generator:
     def generate(self,nodo):
-        if type(nodo).__name__=="ProgramNode":
+        if type(nodo).__name__=="ProgramNodo":
             body_code = ""
             for statment in nodo.statements:
                 body_code += self.generate(statment) + "\n"
@@ -12,17 +12,17 @@ class Generator:
             code_cpp += body_code
             return code_cpp
             
-        elif type(nodo).__name__=="VarDeclarationNode":
+        elif type(nodo).__name__=="VarDeclarationNodo":
             var_type = nodo.var_type
             if var_type == "string":
                 var_type = "std::string"
             if nodo.value is None:
                 return f"{var_type} {nodo.var_name};"
             else:
-                val_gen = self.generate(nodo.value) if hasattr(nodo.value, "__class__") and "Node" in type(nodo.value).__name__ else nodo.value
+                val_gen = self.generate(nodo.value) if hasattr(nodo.value, "__class__") and "Nodo" in type(nodo.value).__name__ else nodo.value
                 return f"{var_type} {nodo.var_name} = {val_gen};"
 
-        elif type(nodo).__name__=="DecisionNode":
+        elif type(nodo).__name__=="DecisionNodo":
             if nodo.type_decision == "if":
                 code_cpp = f"if ({nodo.condition.left}{nodo.condition.operator}{nodo.condition.right}){{\n"
                 for statment in nodo.true_block:
@@ -35,8 +35,8 @@ class Generator:
                     code_cpp += "}\n"
                 return code_cpp
 
-        elif type(nodo).__name__=="AssignationNode":
-            val_gen = self.generate(nodo.value) if hasattr(nodo.value, "__class__") and "Node" in type(nodo.value).__name__ else nodo.value
+        elif type(nodo).__name__=="AssignationNodo":
+            val_gen = self.generate(nodo.value) if hasattr(nodo.value, "__class__") and "Nodo" in type(nodo.value).__name__ else nodo.value
             return f"{nodo.var_name} = {val_gen};"
 
         elif type(nodo).__name__=="IncrementoNodo":
@@ -45,10 +45,10 @@ class Generator:
             else:
                 return f"{nodo.left_value}{nodo.operator};"
 
-        elif type(nodo).__name__=="PrintNode":
+        elif type(nodo).__name__=="PrintNodo":
             return f"std::cout << {nodo.value} << std::endl;"
 
-        elif type(nodo).__name__=="ForNode":
+        elif type(nodo).__name__=="ForNodo":
             init_code = self.generate(nodo.initialization)
             cond_code = f"{nodo.condition.left}{nodo.condition.operator}{nodo.condition.right}"
             inc_code = self.generate(nodo.increment).rstrip(';')
@@ -59,7 +59,7 @@ class Generator:
             code_cpp += "}\n"
             return code_cpp
 
-        elif type(nodo).__name__=="WhileNode":
+        elif type(nodo).__name__=="WhileNodo":
             cond_code = f"{nodo.condition.left}{nodo.condition.operator}{nodo.condition.right}"
             
             code_cpp = f"while ({cond_code}){{\n"
@@ -69,7 +69,7 @@ class Generator:
             code_cpp += "}\n"
             return code_cpp
 
-        elif type(nodo).__name__=="DoWhileNode":
+        elif type(nodo).__name__=="DoWhileNodo":
             code_cpp = f"do {{\n"
             for statment in nodo.loop_block:
                 code_cpp += self.generate(statment) + "\n"
@@ -83,7 +83,7 @@ class Generator:
             code_cpp += "break;\n"
             return code_cpp
 
-        elif type(nodo).__name__=="SwitchNode":
+        elif type(nodo).__name__=="SwitchNodo":
             code_cpp = f"switch ({nodo.variable}) {{\n"
             for case_node in nodo.cases:
                 code_cpp += self.generate(case_node) + "\n"
@@ -95,7 +95,7 @@ class Generator:
             code_cpp += "}\n"
             return code_cpp
 
-        elif type(nodo).__name__=="FunctionNode":
+        elif type(nodo).__name__=="FunctionNodo":
             if nodo.name == "Main":
                 code_cpp = "int main() {\n"
                 for stmt in nodo.body:
@@ -118,12 +118,12 @@ class Generator:
                 code_cpp += "}\n"
                 return code_cpp
 
-        elif type(nodo).__name__=="FunctionCallNode":
+        elif type(nodo).__name__=="FunctionCallNodo":
             args_str = ", ".join([str(arg) if not hasattr(arg, "generate") else self.generate(arg) for arg in nodo.arguments])
             call_str = f"{nodo.name}({args_str})"
             if getattr(nodo, "is_statement", False):
                 return call_str + ";"
             return call_str
 
-        elif type(nodo).__name__=="ReturnNode":
+        elif type(nodo).__name__=="ReturnNodo":
             return f"return {nodo.value};"

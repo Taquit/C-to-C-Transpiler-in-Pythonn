@@ -1,4 +1,4 @@
-from src.ast import ProgramNode, VarDeclarationNode, AssignationNode, DecisionNode, ConditionNode, IncrementoNodo, ForNode, PrintNode, WhileNode, DoWhileNode, CaseNodo, SwitchNode, FunctionNode, FunctionCallNode, ReturnNode
+from src.ast import ProgramNodo, VarDeclarationNodo, AssignationNodo, DecisionNodo, ConditionNodo, IncrementoNodo, ForNodo, PrintNodo, WhileNodo, DoWhileNodo, CaseNodo, SwitchNodo, FunctionNodo, FunctionCallNodo, ReturnNodo
 class Parse:
     #-------BASICOS-------#
     def __init__(self,tokens):
@@ -57,7 +57,7 @@ class Parse:
             self.expected("{")
         
         #Programa dentro de clase
-        program = ProgramNode()
+        program = ProgramNodo()
         
         if has_class:
             while self.current_token() is not None and self.current_token().value != "}":
@@ -120,7 +120,7 @@ class Parse:
                 body.append(stmt)
         self.expected("}")
         
-        return FunctionNode(name, return_type, parameters, body)
+        return FunctionNodo(name, return_type, parameters, body)
 
     def parse_stament(self):
         token = self.current_token()
@@ -134,7 +134,7 @@ class Parse:
                 ret_val += str(self.current_token().value) + " "
                 self.next_token()
             self.expected(";")
-            return ReturnNode(ret_val.strip())
+            return ReturnNodo(ret_val.strip())
         
         if token.type in {"PR_AS_FLO","PR_AS_INT","PR_AS_STR"}:
             return self.parse_var_declaration()
@@ -174,7 +174,7 @@ class Parse:
             
             self.expected(")")
             self.expected(";")
-            return PrintNode(value)
+            return PrintNodo(value)
 
         token_next = self.current_token()
         if token_next is None:
@@ -193,7 +193,7 @@ class Parse:
                         break
             self.expected(")")
             self.expected(";")
-            return FunctionCallNode(var_name, args, is_statement=True)
+            return FunctionCallNodo(var_name, args, is_statement=True)
 
         if token_next.value == "=":
             self.next_token()
@@ -204,7 +204,7 @@ class Parse:
             else:
                 raise SyntaxError(f"Error línea {token_next.line}: Se esperaba un valor después de '='")
             self.expected(";")
-            return AssignationNode(var_name, value)
+            return AssignationNodo(var_name, value)
             
         elif token_next.type in ["OP_COMP", "OP_SINGLE"]:
             operator = token_next.value
@@ -255,7 +255,7 @@ class Parse:
             raise SyntaxError(
                 f"Error línea {token_right.line if token_right else '?'}: Se esperaba un operador ID, INT, FLOAT, STRING o booleano"
             )
-        return ConditionNode(left_value,operator,right_value)
+        return ConditionNodo(left_value,operator,right_value)
 
     def parse_incremento(self):
         # 1. Identificador
@@ -340,12 +340,12 @@ class Parse:
                         else:
                             break
                 self.expected(")")
-                value = FunctionCallNode(val_token.value, args)
+                value = FunctionCallNodo(val_token.value, args)
             else:
                 value = val_token.value
             
         self.expected(";")
-        return VarDeclarationNode(var_type,var_name,value)
+        return VarDeclarationNodo(var_type,var_name,value)
     
 
 
@@ -384,7 +384,7 @@ class Parse:
                     token_actual = self.current_token()
                 self.expected("}")
 
-            return DecisionNode(keyword,condition,true_bloque, false_bloque)
+            return DecisionNodo(keyword,condition,true_bloque, false_bloque)
 
         if keyword == "switch":
             self.expected("(")
@@ -417,7 +417,7 @@ class Parse:
                     raise SyntaxError(f"Error línea {token_actual.line}: Se esperaba 'case' o 'default', pero se encontró '{token_actual.value}'")
                 token_actual = self.current_token()
             self.expected("}")
-            return SwitchNode(variable, cases, default_block)
+            return SwitchNodo(variable, cases, default_block)
         
 
 
@@ -440,7 +440,7 @@ class Parse:
                 value = self.current_token().value
                 self.next_token()
                 self.expected(";")
-                initialization = AssignationNode(var_name, value)
+                initialization = AssignationNodo(var_name, value)
             else:
                 raise SyntaxError(
                     f"Error línea {token_actual.line if token_actual else '?'}: Se esperaba una declaracion o inicializacion para el for"
@@ -464,7 +464,7 @@ class Parse:
                 token_actual = self.current_token()
                 
             self.expected("}")
-            return ForNode(initialization, condition, incremento, loop_block)
+            return ForNodo(initialization, condition, incremento, loop_block)
         
             
         # Si es while 
@@ -482,7 +482,7 @@ class Parse:
                     loop_block.append(stament)
                 token_actual = self.current_token()
             self.expected("}")
-            return WhileNode(condition,loop_block)
+            return WhileNodo(condition,loop_block)
 
         # Si es do-while
         if keyword == "do":
@@ -500,6 +500,6 @@ class Parse:
             condition = self.parse_condition()
             self.expected(")")
             self.expected(";")
-            return DoWhileNode(condition,loop_block)
+            return DoWhileNodo(condition,loop_block)
         
             

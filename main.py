@@ -23,6 +23,8 @@ def main():
     code_cpp = generator.generate(ast)
     print(code_cpp)
 
+    output_file = Path(__file__).parent/"data"/"c++_code.txt"
+    output_file.write_text(code_cpp, encoding="utf-8")
 
 
 
