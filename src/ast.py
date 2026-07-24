@@ -104,3 +104,15 @@ class WhileNode(ASTNode):
             repr_str += f"    {instruccion}\n"
         repr_str += "  }"
         return repr_str
+
+class DoWhileNode(ASTNode):
+    def __init__(self,condition,loop_block):
+        self.condition = condition
+        self.loop_block = loop_block
+
+    def __repr__(self):
+        repr_str = f"DO {{\n"
+        for instruccion in self.loop_block:
+            repr_str += f"    {instruccion}\n"
+        repr_str += f"  }} WHILE({self.condition})"
+        return repr_str

@@ -60,6 +60,13 @@ class Generator:
             code_cpp += "}\n"
             return code_cpp
 
+        elif type(nodo).__name__=="DoWhileNode":
+            code_cpp = f"do {{\n"
+            for statment in nodo.loop_block:
+                code_cpp += self.generate(statment) + "\n"
+            code_cpp += f"}} while({nodo.condition.left}{nodo.condition.operator}{nodo.condition.right})\n"
+            return code_cpp
+
 
 
             

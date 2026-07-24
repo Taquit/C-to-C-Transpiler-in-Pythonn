@@ -1,4 +1,4 @@
-from src.ast import ProgramNode, VarDeclarationNode, AssignationNode, DecisionNode, ConditionNode, IncrementoNodo, ForNode, PrintNode, WhileNode
+from src.ast import ProgramNode, VarDeclarationNode, AssignationNode, DecisionNode, ConditionNode, IncrementoNodo, ForNode, PrintNode, WhileNode, DoWhileNode
 
 class Parse:
     #-------BASICOS-------#
@@ -307,6 +307,8 @@ class Parse:
 
             return DecisionNode(keyword,condition,true_bloque, false_bloque)
 
+        
+
     def parse_loop(self):
         keyword = self.current_token().value
         self.next_token()
@@ -369,5 +371,23 @@ class Parse:
                 token_actual = self.current_token()
             self.expected("}")
             return WhileNode(condition,loop_block)
+
+        # Si es do-while
+        if keyword == "do":
+            self.expected("{")
+            loop_block =[]
+            token_actual = self.current_token()
+            while token_actual is not None and token_actual.value != "}":
+                stament = self.parse_stament()
+                if stament is not None:
+                    loop_block.append(stament)
+                token_actual = self.current_token()
+            self.expected("}")
+            self.expected("while")
+            self.expected("(")
+            condition = self.parse_condition()
+            self.expected(")")
+            self.expected(";")
+            return DoWhileNode(condition,loop_block)
         
             

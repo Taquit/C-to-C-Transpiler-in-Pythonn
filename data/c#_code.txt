@@ -26,6 +26,12 @@ namespace MiAplicacion
                 luz = 1;
                 Console.WriteLine("Luz es 1.4");
             }
+
+            do{
+                
+                luz = 1;
+                Console.WriteLine("Luz es 1.4");
+            }while(luz == 1.4);
         }
     }
 }
