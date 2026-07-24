@@ -8,7 +8,7 @@ ID = re.compile(r"[a-zA-Z][a-zA-Z0-9_]*")
 #PR generales
 PR = re.compile(
     r"\b(break|continue|return|class|public|private|protected|"
-    r"using|namespace|const|static|new|delete)\b"
+    r"using|namespace|const|static|new|delete|default)\b"
 )
 
 #PR ciclos
@@ -68,6 +68,6 @@ TOKEN = re.compile(
     r"(?P<ID_OR_KEYWORD>[a-zA-Z_][a-zA-Z0-9_]*)|" # identificadores y keywords
     r"(?P<OP_DOUBLE>==|!=|<=|>=)|"      # two-character operators
     r"(?P<OP_COMP>\+\+|--|\+=|-=|\*=|\/=)|"     # two-character operators
-    r"(?P<OP_SINGLE>[=;+\-*<>()\{\}\.,\[\]])|"  # single-character tokens
+    r"(?P<OP_SINGLE>[=;+\-*<>()\{\}\.,\[\]:])|"  # single-character tokens
     r"(?P<COMMENT>//.*|/\*[\s\S]*?\*/)"         # comments
 )

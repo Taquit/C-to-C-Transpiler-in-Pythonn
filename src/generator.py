@@ -67,8 +67,21 @@ class Generator:
             code_cpp += f"}} while({nodo.condition.left}{nodo.condition.operator}{nodo.condition.right})\n"
             return code_cpp
 
+        elif type(nodo).__name__=="CaseNodo":
+            code_cpp = f"case {nodo.value}:\n"
+            for statment in nodo.statements:
+                code_cpp += self.generate(statment) + "\n"
+            code_cpp += "break;\n"
+            return code_cpp
 
-
-            
-        
-            
+        elif type(nodo).__name__=="SwitchNode":
+            code_cpp = f"switch ({nodo.variable}) {{\n"
+            for case_node in nodo.cases:
+                code_cpp += self.generate(case_node) + "\n"
+            if getattr(nodo, "default_block", None):
+                code_cpp += "default:\n"
+                for statment in nodo.default_block:
+                    code_cpp += self.generate(statment) + "\n"
+                code_cpp += "break;\n"
+            code_cpp += "}\n"
+            return code_cpp

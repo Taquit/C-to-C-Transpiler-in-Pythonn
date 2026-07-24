@@ -1,4 +1,4 @@
-from src.ast import ProgramNode, VarDeclarationNode, AssignationNode, DecisionNode, ConditionNode, IncrementoNodo, ForNode, PrintNode, WhileNode, DoWhileNode
+from src.ast import ProgramNode, VarDeclarationNode, AssignationNode, DecisionNode, ConditionNode, IncrementoNodo, ForNode, PrintNode, WhileNode, DoWhileNode, CaseNodo,SwitchNode
 
 class Parse:
     #-------BASICOS-------#
@@ -242,6 +242,20 @@ class Parse:
 
         return IncrementoNodo(left_value, operator, right_value)
 
+    def parse_case(self):
+        self.expected("case")
+        value = self.current_token().value
+        self.next_token()
+        self.expected(":")
+        token_actual = self.current_token()
+        statements = []
+        while token_actual is not None and token_actual.value != "break":
+            staments = self.parse_stament()
+            statements.append(staments)
+            token_actual = self.current_token()
+        self.expected("break")
+        self.expected(";")
+        return CaseNodo(value,statements)
         
         
     #-------EXPRESIONES-------#
@@ -307,7 +321,40 @@ class Parse:
 
             return DecisionNode(keyword,condition,true_bloque, false_bloque)
 
+        if keyword == "switch":
+            self.expected("(")
+            token_var = self.expected("ID")
+            variable = token_var.value
+            self.expected(")")
+            self.expected("{")
+            cases = []
+            default_block = None
+            token_actual = self.current_token()
+            while token_actual is not None and token_actual.value != "}":
+                if token_actual.value == "case":
+                    case = self.parse_case()
+                    if case is not None:
+                        cases.append(case)
+                elif token_actual.value == "default":
+                    self.expected("default")
+                    self.expected(":")
+                    default_block = []
+                    token_act = self.current_token()
+                    while token_act is not None and token_act.value not in ["}", "break"]:
+                        stament = self.parse_stament()
+                        if stament is not None:
+                            default_block.append(stament)
+                        token_act = self.current_token()
+                    if self.current_token().value == "break":
+                        self.expected("break")
+                        self.expected(";")
+                else:
+                    raise SyntaxError(f"Error línea {token_actual.line}: Se esperaba 'case' o 'default', pero se encontró '{token_actual.value}'")
+                token_actual = self.current_token()
+            self.expected("}")
+            return SwitchNode(variable, cases, default_block)
         
+
 
     def parse_loop(self):
         keyword = self.current_token().value

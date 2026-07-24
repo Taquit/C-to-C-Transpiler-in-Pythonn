@@ -56,6 +56,17 @@ class IncrementoNodo(ASTNode):
         return f"IncrementoNodo({self.left_value},{self.operator},{self.right_value})"
 
 
+class CaseNodo(ASTNode):
+    def __init__(self,value,statements):
+        self.value = value
+        self.statements = statements
+
+    def __repr__(self):
+        repr_str = f"CASE {self.value}:\n"
+        for stmt in self.statements:
+            repr_str += f"      {stmt}\n"
+        return repr_str
+
 class DecisionNode(ASTNode):
     def __init__(self,type_decision,condition,true_block,false_block=None):
         self.type_decision = type_decision
@@ -115,4 +126,21 @@ class DoWhileNode(ASTNode):
         for instruccion in self.loop_block:
             repr_str += f"    {instruccion}\n"
         repr_str += f"  }} WHILE({self.condition})"
+        return repr_str
+
+class SwitchNode(ASTNode):
+    def __init__(self,variable,cases,default_block=None):
+        self.variable = variable
+        self.cases = cases
+        self.default_block = default_block
+
+    def __repr__(self):
+        repr_str = f"SWITCH ({self.variable}) {{\n"
+        for case in self.cases:
+            repr_str += f"  {case}\n"
+        if self.default_block:
+            repr_str += f"  DEFAULT:\n"
+            for stmt in self.default_block:
+                repr_str += f"    {stmt}\n"
+        repr_str += "}"
         return repr_str
