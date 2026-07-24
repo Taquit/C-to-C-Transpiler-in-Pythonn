@@ -163,7 +163,7 @@ class Parse:
             right_value = None
             if operator in ["+=", "-=", "*=", "/="]:
                 token_right = self.current_token()
-                if token_right is not None and token_right.type in ["ID", "INT", "FLOAT"]:
+                if token_right is not None and token_right.type in ["ID", "INT", "FLOAT", "STRING"]:
                     right_value = token_right.value
                     self.next_token()
                 else:
@@ -179,12 +179,12 @@ class Parse:
         
         #Verificamos token left
         token_left = self.current_token()
-        if token_left is not None and token_left.type in ["ID","INT","FLOAT"]:
+        if token_left is not None and token_left.type in ["ID","INT","FLOAT","STRING","PR_V"]:
             left_value = token_left.value
             self.next_token()
         else:
             raise SyntaxError(
-                f"Error línea {token_left.line if token_left else '?'}: Se esperaba un operador ID, INT, FLOAT"
+                f"Error línea {token_left.line if token_left else '?'}: Se esperaba un operador ID, INT, FLOAT, STRING o booleano"
             )
 
         #Verificamos operador
@@ -198,12 +198,12 @@ class Parse:
             )
         # Verificamos token right
         token_right = self.current_token()
-        if token_right is not None and token_right.type in ["ID","INT","FLOAT"]:
+        if token_right is not None and token_right.type in ["ID","INT","FLOAT","STRING","PR_V"]:
             right_value = token_right.value
             self.next_token()
         else:
             raise SyntaxError(
-                f"Error línea {token_right.line if token_right else '?'}: Se esperaba un operador ID, INT, FLOAT"
+                f"Error línea {token_right.line if token_right else '?'}: Se esperaba un operador ID, INT, FLOAT, STRING o booleano"
             )
         return ConditionNode(left_value,operator,right_value)
 
@@ -232,7 +232,7 @@ class Parse:
         right_value = None
         if operator in ["+=", "-=", "*=", "/="]:
             token_right = self.current_token()
-            if token_right is not None and token_right.type in ["ID", "INT", "FLOAT"]:
+            if token_right is not None and token_right.type in ["ID", "INT", "FLOAT", "STRING"]:
                 right_value = token_right.value
                 self.next_token()
             else:
@@ -335,8 +335,8 @@ class Parse:
                     case = self.parse_case()
                     if case is not None:
                         cases.append(case)
-                elif token_actual.value == "default":
                     self.expected("default")
+                elif token_actual.value == "default":
                     self.expected(":")
                     default_block = []
                     token_act = self.current_token()

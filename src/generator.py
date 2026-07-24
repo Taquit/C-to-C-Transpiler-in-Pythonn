@@ -1,18 +1,26 @@
 class Generator:
     def generate(self,nodo):
         if type(nodo).__name__=="ProgramNode":
-            code_cpp = "#include <iostream>\n\n"
-            code_cpp += "int main() {\n"
+            body_code = ""
             for statment in nodo.statements:
-                code_cpp += self.generate(statment) + "\n"
+                body_code += self.generate(statment) + "\n"
+            
+            code_cpp = "#include <iostream>\n"
+            if "std::string" in body_code:
+                code_cpp += "#include <string>\n"
+            code_cpp += "\nint main() {\n"
+            code_cpp += body_code
             code_cpp += "return 0;\n}\n"
             return code_cpp
             
         elif type(nodo).__name__=="VarDeclarationNode":
+            var_type = nodo.var_type
+            if var_type == "string":
+                var_type = "std::string"
             if nodo.value is None:
-                return f"{nodo.var_type} {nodo.var_name};"
+                return f"{var_type} {nodo.var_name};"
             else:
-                return f"{nodo.var_type} {nodo.var_name} = {nodo.value};"
+                return f"{var_type} {nodo.var_name} = {nodo.value};"
 
         elif type(nodo).__name__=="DecisionNode":
             if nodo.type_decision == "if":
