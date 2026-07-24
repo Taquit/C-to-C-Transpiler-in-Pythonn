@@ -8,9 +8,8 @@ class Generator:
             code_cpp = "#include <iostream>\n"
             if "std::string" in body_code:
                 code_cpp += "#include <string>\n"
-            code_cpp += "\nint main() {\n"
+            code_cpp += "\n"
             code_cpp += body_code
-            code_cpp += "return 0;\n}\n"
             return code_cpp
             
         elif type(nodo).__name__=="VarDeclarationNode":
@@ -20,7 +19,8 @@ class Generator:
             if nodo.value is None:
                 return f"{var_type} {nodo.var_name};"
             else:
-                return f"{var_type} {nodo.var_name} = {nodo.value};"
+                val_gen = self.generate(nodo.value) if hasattr(nodo.value, "__class__") and "Node" in type(nodo.value).__name__ else nodo.value
+                return f"{var_type} {nodo.var_name} = {val_gen};"
 
         elif type(nodo).__name__=="DecisionNode":
             if nodo.type_decision == "if":
@@ -36,7 +36,8 @@ class Generator:
                 return code_cpp
 
         elif type(nodo).__name__=="AssignationNode":
-            return f"{nodo.var_name} = {nodo.value};"
+            val_gen = self.generate(nodo.value) if hasattr(nodo.value, "__class__") and "Node" in type(nodo.value).__name__ else nodo.value
+            return f"{nodo.var_name} = {val_gen};"
 
         elif type(nodo).__name__=="IncrementoNodo":
             if nodo.right_value is not None:
@@ -93,3 +94,36 @@ class Generator:
                 code_cpp += "break;\n"
             code_cpp += "}\n"
             return code_cpp
+
+        elif type(nodo).__name__=="FunctionNode":
+            if nodo.name == "Main":
+                code_cpp = "int main() {\n"
+                for stmt in nodo.body:
+                    code_cpp += self.generate(stmt) + "\n"
+                code_cpp += "return 0;\n}\n"
+                return code_cpp
+            else:
+                ret_type = nodo.return_type
+                if ret_type == "string":
+                    ret_type = "std::string"
+                params = []
+                for p_type, p_name in nodo.parameters:
+                    if p_type == "string":
+                        p_type = "std::string"
+                    params.append(f"{p_type} {p_name}")
+                params_str = ", ".join(params)
+                code_cpp = f"{ret_type} {nodo.name}({params_str}) {{\n"
+                for stmt in nodo.body:
+                    code_cpp += self.generate(stmt) + "\n"
+                code_cpp += "}\n"
+                return code_cpp
+
+        elif type(nodo).__name__=="FunctionCallNode":
+            args_str = ", ".join([str(arg) if not hasattr(arg, "generate") else self.generate(arg) for arg in nodo.arguments])
+            call_str = f"{nodo.name}({args_str})"
+            if getattr(nodo, "is_statement", False):
+                return call_str + ";"
+            return call_str
+
+        elif type(nodo).__name__=="ReturnNode":
+            return f"return {nodo.value};"

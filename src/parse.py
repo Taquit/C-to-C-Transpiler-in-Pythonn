@@ -1,5 +1,4 @@
-from src.ast import ProgramNode, VarDeclarationNode, AssignationNode, DecisionNode, ConditionNode, IncrementoNodo, ForNode, PrintNode, WhileNode, DoWhileNode, CaseNodo,SwitchNode
-
+from src.ast import ProgramNode, VarDeclarationNode, AssignationNode, DecisionNode, ConditionNode, IncrementoNodo, ForNode, PrintNode, WhileNode, DoWhileNode, CaseNodo, SwitchNode, FunctionNode, FunctionCallNode, ReturnNode
 class Parse:
     #-------BASICOS-------#
     def __init__(self,tokens):
@@ -57,49 +56,85 @@ class Parse:
             self.expected("ID")
             self.expected("{")
         
-        
-        #Consume "static void main (string[] args)"
-        has_main = False 
-        if self.current_token() and self.current_token().value  == "static":
-            has_main = True 
-            self.expected("static")
-            self.expected("void")
-            self.expected("Main")
-            self.expected("(")
-            if self.current_token() and self.current_token().value == "string":
-                self.expected("string")
-                self.expected("[")
-                self.expected("]")
-                self.expected("ID")
-            self.expected(")")
-            self.expected("{")
-        
-        #Programa dentro de main
+        #Programa dentro de clase
         program = ProgramNode()
-        if has_main:
+        
+        if has_class:
             while self.current_token() is not None and self.current_token().value != "}":
-                stament = self.parse_stament()
-                if stament is not None:
-                    program.statements.append(stament)
+                method = self.parse_method()
+                if method is not None:
+                    program.statements.append(method)
             self.expected("}")
-
         else:
             while self.current_token() is not None:
                 stament = self.parse_stament()
                 if stament is not None:
                     program.statements.append(stament)
-        
-        if has_class:
-            self.expected("}")
+                    
         if has_namespace:
             self.expected("}")
             
         return program
 
+    def parse_method(self):
+        # Modifiers
+        while self.current_token() and self.current_token().value in ["public", "private", "static"]:
+            self.next_token()
+            
+        # Return type
+        token_type = self.current_token()
+        if token_type.type not in ["PR_AS_FLO", "PR_AS_INT", "PR_AS_STR"] and token_type.value != "void":
+            raise SyntaxError(f"Error línea {token_type.line}: Se esperaba un tipo de retorno")
+        return_type = token_type.value
+        self.next_token()
+        
+        # Name
+        name = self.expected("ID").value
+        
+        self.expected("(")
+        parameters = []
+        if self.current_token() and self.current_token().value != ")":
+            if name == "Main" and self.current_token().value == "string":
+                self.expected("string")
+                self.expected("[")
+                self.expected("]")
+                p_name = self.expected("ID").value
+                parameters.append(("string[]", p_name))
+            else:
+                while True:
+                    p_type = self.current_token().value
+                    self.next_token()
+                    p_name = self.expected("ID").value
+                    parameters.append((p_type, p_name))
+                    if self.current_token() and self.current_token().value == ",":
+                        self.expected(",")
+                    else:
+                        break
+        self.expected(")")
+        self.expected("{")
+        
+        body = []
+        while self.current_token() and self.current_token().value != "}":
+            stmt = self.parse_stament()
+            if stmt is not None:
+                body.append(stmt)
+        self.expected("}")
+        
+        return FunctionNode(name, return_type, parameters, body)
+
     def parse_stament(self):
         token = self.current_token()
         if token is None:
             return None
+        
+        if token.value == "return":
+            self.next_token()
+            ret_val = ""
+            while self.current_token() and self.current_token().value != ";":
+                ret_val += str(self.current_token().value) + " "
+                self.next_token()
+            self.expected(";")
+            return ReturnNode(ret_val.strip())
         
         if token.type in {"PR_AS_FLO","PR_AS_INT","PR_AS_STR"}:
             return self.parse_var_declaration()
@@ -144,6 +179,21 @@ class Parse:
         token_next = self.current_token()
         if token_next is None:
             raise SyntaxError(f"Error línea {token_id.line}: Sentencia incompleta después de '{var_name}'")
+
+        if token_next.value == "(":
+            self.next_token()
+            args = []
+            if self.current_token() and self.current_token().value != ")":
+                while True:
+                    args.append(self.current_token().value)
+                    self.next_token()
+                    if self.current_token() and self.current_token().value == ",":
+                        self.expected(",")
+                    else:
+                        break
+            self.expected(")")
+            self.expected(";")
+            return FunctionCallNode(var_name, args, is_statement=True)
 
         if token_next.value == "=":
             self.next_token()
@@ -276,9 +326,24 @@ class Parse:
         token_actual = self.current_token()
         if token_actual is not None and token_actual.value != ";":
             self.expected("=")
-            value = self.current_token().value
+            val_token = self.current_token()
             self.next_token()
-        
+            if self.current_token() and self.current_token().value == "(":
+                self.next_token()
+                args = []
+                if self.current_token() and self.current_token().value != ")":
+                    while True:
+                        args.append(self.current_token().value)
+                        self.next_token()
+                        if self.current_token() and self.current_token().value == ",":
+                            self.expected(",")
+                        else:
+                            break
+                self.expected(")")
+                value = FunctionCallNode(val_token.value, args)
+            else:
+                value = val_token.value
+            
         self.expected(";")
         return VarDeclarationNode(var_type,var_name,value)
     
@@ -335,8 +400,8 @@ class Parse:
                     case = self.parse_case()
                     if case is not None:
                         cases.append(case)
-                    self.expected("default")
                 elif token_actual.value == "default":
+                    self.expected("default")
                     self.expected(":")
                     default_block = []
                     token_act = self.current_token()

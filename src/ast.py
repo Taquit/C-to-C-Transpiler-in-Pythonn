@@ -144,3 +144,35 @@ class SwitchNode(ASTNode):
                 repr_str += f"    {stmt}\n"
         repr_str += "}"
         return repr_str
+
+class FunctionNode(ASTNode):
+    def __init__(self, name, return_type, parameters, body):
+        self.name = name
+        self.return_type = return_type
+        self.parameters = parameters
+        self.body = body
+
+    def __repr__(self):
+        params_str = ", ".join([f"{p_type} {p_name}" for p_type, p_name in self.parameters])
+        repr_str = f"FUNCTION {self.return_type} {self.name}({params_str}) {{\n"
+        for stmt in self.body:
+            repr_str += f"  {stmt}\n"
+        repr_str += "}"
+        return repr_str
+
+class FunctionCallNode(ASTNode):
+    def __init__(self, name, arguments, is_statement=False):
+        self.name = name
+        self.arguments = arguments
+        self.is_statement = is_statement
+
+    def __repr__(self):
+        args_str = ", ".join(map(str, self.arguments))
+        return f"CALL {self.name}({args_str})"
+
+class ReturnNode(ASTNode):
+    def __init__(self, value):
+        self.value = value
+
+    def __repr__(self):
+        return f"RETURN {self.value}"

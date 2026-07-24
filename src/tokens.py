@@ -62,7 +62,7 @@ COMP_P = re.compile(r"//.*|/\*[\s\S]*?\*/")
 
 #----------Tokenizador master----------
 TOKEN = re.compile(
-    r"(?P<FLOAT>[0-9]+\.[0-9]+)|"               # float literals
+    r"(?P<FLOAT>[0-9]+\.[0-9]+[fF]?)|"               # float literals
     r"(?P<INT>[0-9]+)|"                         # integer literals
     r"(?P<STRING>\"[^\"]*\")|"                  # string literals
     r"(?P<ID_OR_KEYWORD>[a-zA-Z_][a-zA-Z0-9_]*)|" # identificadores y keywords
