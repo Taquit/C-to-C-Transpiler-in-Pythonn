@@ -1,62 +1,60 @@
 using System;
 
-namespace MiAplicacion {
+namespace TranspiladorPrueba {
     class Program {
         
-        static void Saludar(string nombre, int iteraciones) {
-            for (int i = 0; i < iteraciones; i++) {
-                Console.WriteLine(nombre);
-            }
+        static string ObtenerSaludo(string nombre) {
+            return "Saludos, " + nombre;
         }
 
-        static int Sumar(int a, int b) {
-            return a ;
+        static int Multiplicar(int baseNum, int multiplicador) {
+            return baseNum * multiplicador;
+        }
+
+        static void ImprimirConteo(int limite) {
+            for (int i = 0; i < limite; i++) {
+                Console.WriteLine("Contando");
+            }
         }
 
         static void Main(string[] args) {
-            Console.WriteLine("¡Hola, mundo!");
+            Console.WriteLine("Iniciando prueba completa...");
             
-            Saludar("Ruben", 3);
+            string miNombre = "Usuario";
+            string saludo = ObtenerSaludo(miNombre);
+            Console.WriteLine(saludo);
             
-            int resultado = Sumar(10, 20);
+            int factor = 5;
+            int total = Multiplicar(factor, 2);
             
-            if (resultado == 30) {
-                Console.WriteLine("La suma es correcta");
+            if (total == 10) {
+                Console.WriteLine("La multiplicacion es correcta");
             } else {
-                Console.WriteLine("La suma es incorrecta");
-            }
-            
-            float luz  = 1.4f;
-            if ( luz == 1.4f ) { 
-                Console.WriteLine("Luz es 1.4");
-            }else{
-                int rubenn = 0;
+                Console.WriteLine("Error en la logica");
             }
 
-            for(int i = 0;i<5;i++){
-                Console.WriteLine("Iteracion");
-            }
-            Console.WriteLine("Fin del programa.");
+            ImprimirConteo(3);
 
-            while(luz == 1.4f){
-                
-                luz = 1;
-                Console.WriteLine("Luz es 1.4");
+            float temperatura = 36.5f;
+            while (temperatura < 38.0f) {
+                temperatura += 1.0f;
+                Console.WriteLine("Subiendo temperatura");
             }
 
-            do{
-                
-                luz = 1;
-                Console.WriteLine("Luz es 1.4");
-            }while(luz == 1.4f);
-            switch(luz){
-                case 1.5f :
-                    Console.WriteLine("Luz es 1.4");
+            int opcion = 2;
+            switch (opcion) {
+                case 1:
+                    Console.WriteLine("Opcion 1 seleccionada");
                     break;
-                default :
-                    Console.WriteLine("Luz no es 1.4");
+                case 2:
+                    Console.WriteLine("Opcion 2 seleccionada");
+                    break;
+                default:
+                    Console.WriteLine("Opcion desconocida");
                     break;
             }
+
+            Console.WriteLine("Prueba finalizada exitosamente.");
         }
     }
 }

@@ -1,61 +1,58 @@
 #include <iostream>
 #include <string>
 
-void Saludar(std::string nombre, int iteraciones) {
-for (int i = 0; i<iteraciones; i++){
-std::cout << nombre << std::endl;
+std::string ObtenerSaludo(std::string nombre) {
+return "Saludos, " + nombre;
 }
 
+int Multiplicar(int baseNum, int multiplicador) {
+return baseNum * multiplicador;
 }
 
-int Sumar(int a, int b) {
-return a;
+void ImprimirConteo(int limite) {
+for (int i = 0; i<limite; i++){
+std::cout << "Contando" << std::endl;
+}
+
 }
 
 int main() {
-std::cout << "¡Hola, mundo!" << std::endl;
-Saludar("Ruben", 3);
-int resultado = Sumar(10, 20);
-if (resultado==30){
-std::cout << "La suma es correcta" << std::endl;
+std::cout << "Iniciando prueba completa..." << std::endl;
+std::string miNombre = "Usuario";
+std::string saludo = ObtenerSaludo(miNombre);
+std::cout << saludo << std::endl;
+int factor = 5;
+int total = Multiplicar(factor, 2);
+if (total==10){
+std::cout << "La multiplicacion es correcta" << std::endl;
 }
 else {
-std::cout << "La suma es incorrecta" << std::endl;
+std::cout << "Error en la logica" << std::endl;
 }
 
-float luz = 1.4f;
-if (luz==1.4f){
-std::cout << "Luz es 1.4" << std::endl;
-}
-else {
-int rubenn = 0;
-}
-
-for (int i = 0; i<5; i++){
-std::cout << "Iteracion" << std::endl;
+ImprimirConteo(3);
+float temperatura = 36.5f;
+while (temperatura<38.0f){
+temperatura += 1.0f;
+std::cout << "Subiendo temperatura" << std::endl;
 }
 
-std::cout << "Fin del programa." << std::endl;
-while (luz==1.4f){
-luz = 1;
-std::cout << "Luz es 1.4" << std::endl;
-}
+int opcion = 2;
+switch (opcion) {
+case 1:
+std::cout << "Opcion 1 seleccionada" << std::endl;
+break;
 
-do {
-luz = 1;
-std::cout << "Luz es 1.4" << std::endl;
-} while(luz==1.4f)
-
-switch (luz) {
-case 1.5f:
-std::cout << "Luz es 1.4" << std::endl;
+case 2:
+std::cout << "Opcion 2 seleccionada" << std::endl;
 break;
 
 default:
-std::cout << "Luz no es 1.4" << std::endl;
+std::cout << "Opcion desconocida" << std::endl;
 break;
 }
 
+std::cout << "Prueba finalizada exitosamente." << std::endl;
 return 0;
 }
 
