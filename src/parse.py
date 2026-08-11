@@ -1,4 +1,6 @@
-from src.ast import ProgramNodo, VarDeclarationNodo, AssignationNodo, DecisionNodo, ConditionNodo, IncrementoNodo, ForNodo, PrintNodo, WhileNodo, DoWhileNodo, CaseNodo, SwitchNodo, FunctionNodo, FunctionCallNodo, ReturnNodo
+from src.ast import LiteralNodo
+from src.ast import BinOpNodo
+from src.ast import ProgramNodo, VarDeclarationNodo, AssignationNodo, DecisionNodo, ConditionNodo, IncrementoNodo, ForNodo, PrintNodo, WhileNodo, DoWhileNodo, CaseNodo, SwitchNodo, FunctionNodo, FunctionCallNodo, ReturnNodo,IdentifierNodo
 class Parse:
     #-------BASICOS-------#
     def __init__(self,tokens):
@@ -225,6 +227,86 @@ class Parse:
             raise SyntaxError(f"Error línea {token_next.line}: Sentencia no reconocida después del identificador '{var_name}'")
 
     #-------HELPERS-------#
+
+    def parse_expression(self):
+        #Entrada para cualquier expresion
+        return self.parse_equality()
+    
+    def parse_equality(self):
+        #Manjea == y !=
+        left = self.parse_comparasion()
+        while self.current_token() and self.current_token().value in ["==","!="]:
+            operator = self.current_token().value
+            self.next_token()
+            right = self.parse_comparasion()
+            left = BinOpNodo(left,operator,right)
+        return left
+
+    def parse_comparasion(self):
+        #Manjea <,>,<=,>=
+        left = self.parse_term()
+        while self.current_token() and self.current_token().value in ["<",">","<=",">="]:
+            operator = self.current_token().value
+            self.next_token()
+            right = self.parse_term()
+            left = BinOpNodo(left,operator,right)
+        return left
+
+    def parse_term(self):
+        #Manjea +,-
+        left = self.parse_factor()
+        while self.current_token() and self.current_token().value in ["+","-"]:
+            operator = self.current_token().value
+            self.next_token()
+            right = self.parse_factor()
+            left = BinOpNodo(left,operator,right)
+        return left
+    
+    def parse_factor(self):
+        #Manjea *,
+        left = self.parse_primary()
+        while self.current_token() and self.current_token().value in ["*","/"]:
+            operator = self.current_token().value
+            self.next_token()
+            right = self.parse_primary()
+            left = BinOpNodo(left,operator,right)
+        return left
+    
+    def parse_primary(self):
+        #Identificadores,numeros,strings, llamadas a funcion, parametros
+        token = self.current_token()
+        if token is None:
+            raise SyntaxError("Se esperaba una expresion pero el archivo termini")
+        if token.type in ["INT","FLOAT","STRING","PR_V"]:
+            self.next_token()
+            return LiteralNodo(token.value,token.type)
+        elif token.type == "ID":
+            #Puede ser llamada a funcion o llamada a funcion
+            var_name = token.value
+            self.next_token()
+            
+            #Si le sigue ( es una llamada a funcion
+            if self.current_token() and self.current_token().value == "(":
+                self.next_token()
+                args = []
+                if self.current_token() and self.current_token().value != ")":
+                    while True:
+                        args.append(self.parse_expression()) #Recursivo
+                        if self.current_token() and self.current_token().value == ",":
+                            self.expected(",")
+                        else:
+                            break
+                self.expected(")")
+                return FunctionCallNodo(var_name, args)
+            else:
+                return IdentifierNodo(var_name)
+        elif token.value == "(":
+            self.next_token()
+            expr = self.parse_expression()
+            self.expected(")")
+            return expr
+        else:
+            raise SyntaxError(f"Error de Sintaxis en la línea {token.line}: Se esperaba una expresión pero se encontró '{token.value}'")
     def parse_condition(self):
         
         #Verificamos token left

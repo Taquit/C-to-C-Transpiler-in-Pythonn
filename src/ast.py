@@ -1,6 +1,30 @@
 class ASTNodo:
     pass
 
+class LiteralNodo(ASTNodo):
+    def __init__(self,value,val_type):
+        self.value = value
+        self.val_type = val_type
+
+    def __repr__(self):
+        return f"Literal({self.value})"
+
+class IdentifierNodo(ASTNodo):
+    def __init__(self,name):
+        self.name = name
+    
+    def __repr__(self):
+        return f"Identifier({self.name})"
+
+class BinOpNodo(ASTNodo):
+    def __init__(self,left,operator,right):
+        self.left = left
+        self.operator = operator
+        self.right = right
+
+    def __repr__(self):
+        return f"BinOpNodo({self.left},{self.operator},{self.right})"
+
 class ProgramNodo(ASTNodo):
     def __init__(self):
         self.statements = []
