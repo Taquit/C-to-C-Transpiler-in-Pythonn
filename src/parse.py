@@ -131,12 +131,9 @@ class Parse:
         
         if token.value == "return":
             self.next_token()
-            ret_val = ""
-            while self.current_token() and self.current_token().value != ";":
-                ret_val += str(self.current_token().value) + " "
-                self.next_token()
+            ret_val = self.parse_expression() # Usamos el nuevo analizador
             self.expected(";")
-            return ReturnNodo(ret_val.strip())
+            return ReturnNodo(ret_val)
         
         if token.type in {"PR_AS_FLO","PR_AS_INT","PR_AS_STR"}:
             return self.parse_var_declaration()
@@ -167,16 +164,13 @@ class Parse:
                 raise SyntaxError(f"Error línea {func_name.line}: Método no soportado '{func_name.value}'")
             self.expected("(")
             
-            token_val = self.current_token()
-            if token_val is not None and token_val.type in ["STRING", "ID"]:
-                value = token_val.value
-                self.next_token()
-            else:
-                raise SyntaxError(f"Error línea {token_val.line if token_val else '?'}: Se esperaba un string o identificador")
+            # Ahora parseamos cualquier expresión (sumas, variables, llamadas, etc)
+            value = self.parse_expression() 
             
             self.expected(")")
             self.expected(";")
             return PrintNodo(value)
+
 
         token_next = self.current_token()
         if token_next is None:
@@ -199,12 +193,7 @@ class Parse:
 
         if token_next.value == "=":
             self.next_token()
-            token_val = self.current_token()
-            if token_val is not None:
-                value = token_val.value
-                self.next_token()
-            else:
-                raise SyntaxError(f"Error línea {token_next.line}: Se esperaba un valor después de '='")
+            value = self.parse_expression() # Evaluamos la expresión de la derecha
             self.expected(";")
             return AssignationNodo(var_name, value)
             
@@ -307,37 +296,10 @@ class Parse:
             return expr
         else:
             raise SyntaxError(f"Error de Sintaxis en la línea {token.line}: Se esperaba una expresión pero se encontró '{token.value}'")
+    
     def parse_condition(self):
-        
-        #Verificamos token left
-        token_left = self.current_token()
-        if token_left is not None and token_left.type in ["ID","INT","FLOAT","STRING","PR_V"]:
-            left_value = token_left.value
-            self.next_token()
-        else:
-            raise SyntaxError(
-                f"Error línea {token_left.line if token_left else '?'}: Se esperaba un operador ID, INT, FLOAT, STRING o booleano"
-            )
+        return self.parse_expression()
 
-        #Verificamos operador
-        token_op = self.current_token()
-        if token_op is not None and token_op.type in ["OP_DOUBLE","OP_SINGLE"]:
-            operator = token_op.value
-            self.next_token()
-        else:
-            raise SyntaxError(
-                f"Error línea {token_op.line if token_op else '?'}: Se esperaba un operador (==, <, >, etc.)"
-            )
-        # Verificamos token right
-        token_right = self.current_token()
-        if token_right is not None and token_right.type in ["ID","INT","FLOAT","STRING","PR_V"]:
-            right_value = token_right.value
-            self.next_token()
-        else:
-            raise SyntaxError(
-                f"Error línea {token_right.line if token_right else '?'}: Se esperaba un operador ID, INT, FLOAT, STRING o booleano"
-            )
-        return ConditionNodo(left_value,operator,right_value)
 
     def parse_incremento(self):
         # 1. Identificador
@@ -403,31 +365,15 @@ class Parse:
         token_name = self.expected("ID")
         var_name = token_name.value
         
-        # Regla
+                # Regla
         value = None
         token_actual = self.current_token()
         if token_actual is not None and token_actual.value != ";":
             self.expected("=")
-            val_token = self.current_token()
-            self.next_token()
-            if self.current_token() and self.current_token().value == "(":
-                self.next_token()
-                args = []
-                if self.current_token() and self.current_token().value != ")":
-                    while True:
-                        args.append(self.current_token().value)
-                        self.next_token()
-                        if self.current_token() and self.current_token().value == ",":
-                            self.expected(",")
-                        else:
-                            break
-                self.expected(")")
-                value = FunctionCallNodo(val_token.value, args)
-            else:
-                value = val_token.value
+            value = self.parse_expression() # Simplificado gracias a nuestro nuevo método
             
         self.expected(";")
-        return VarDeclarationNodo(var_type,var_name,value)
+        return VarDeclarationNodo(var_type, var_name, value)
     
 
 

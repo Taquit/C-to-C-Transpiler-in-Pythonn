@@ -12,6 +12,21 @@ class Generator:
             code_cpp += body_code
             return code_cpp
             
+        elif type(nodo).__name__ == "LiteralNodo":
+            # Los literales (ej. 5, 3.14, "hola") se pasan tal cual a C++
+            return str(nodo.value)
+
+        elif type(nodo).__name__ == "IdentifierNodo":
+            # Los nombres de variables se pasan tal cual a C++
+            return str(nodo.name)
+
+        elif type(nodo).__name__ == "BinOpNodo":
+            # Generamos recursivamente el lado izquierdo y el derecho
+            left_code = self.generate(nodo.left)
+            right_code = self.generate(nodo.right)
+            return f"({left_code} {nodo.operator} {right_code})"
+
+
         elif type(nodo).__name__=="VarDeclarationNodo":
             var_type = nodo.var_type
             if var_type == "string":

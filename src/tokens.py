@@ -67,7 +67,7 @@ TOKEN = re.compile(
     r"(?P<STRING>\"[^\"]*\")|"                  # string literals
     r"(?P<ID_OR_KEYWORD>[a-zA-Z_][a-zA-Z0-9_]*)|" # identificadores y keywords
     r"(?P<OP_DOUBLE>==|!=|<=|>=)|"      # two-character operators
-    r"(?P<OP_COMP>\+\+|--|\+=|-=|\*=|\/=)"     # two-character operators
-    r"(?P<COMMENT>//.*|/\*[\s\S]*?\*/)"         # comments
+    r"(?P<OP_COMP>\+\+|--|\+=|-=|\*=|\/=)|"     # two-character operators
+    r"(?P<COMMENT>//.*|/\*[\s\S]*?\*/)|"         # comments
     r"(?P<OP_SINGLE>[=;+\-*<>()\{\}\.,\[\]:/])"  # single-character tokens
 )

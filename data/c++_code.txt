@@ -2,57 +2,57 @@
 #include <string>
 
 std::string ObtenerSaludo(std::string nombre) {
-return "Saludos, " + nombre;
+return BinOpNodo(Literal("Saludos, "),+,Identifier(nombre));
 }
 
 int Multiplicar(int baseNum, int multiplicador) {
-return baseNum * multiplicador;
+return BinOpNodo(Identifier(baseNum),*,Identifier(multiplicador));
 }
 
 void ImprimirConteo(int limite) {
-for (int i = 0; i<limite; i++){
-std::cout << "Contando" << std::endl;
+for (int i = 0; Identifier(i)<Identifier(limite); i++){
+std::cout << Literal("Contando") << std::endl;
 }
 
 }
 
 int main() {
-std::cout << "Iniciando prueba completa..." << std::endl;
+std::cout << Literal("Iniciando prueba completa...") << std::endl;
 std::string miNombre = "Usuario";
-std::string saludo = ObtenerSaludo(miNombre);
-std::cout << saludo << std::endl;
+std::string saludo = ObtenerSaludo(Identifier(miNombre));
+std::cout << Identifier(saludo) << std::endl;
 int factor = 5;
-int total = Multiplicar(factor, 2);
-if (total==10){
-std::cout << "La multiplicacion es correcta" << std::endl;
+int total = Multiplicar(Identifier(factor), Literal(2));
+if (Identifier(total)==Literal(10)){
+std::cout << Literal("La multiplicacion es correcta") << std::endl;
 }
 else {
-std::cout << "Error en la logica" << std::endl;
+std::cout << Literal("Error en la logica") << std::endl;
 }
 
 ImprimirConteo(3);
 float temperatura = 36.5f;
-while (temperatura<38.0f){
+while (Identifier(temperatura)<Literal(38.0f)){
 temperatura += 1.0f;
-std::cout << "Subiendo temperatura" << std::endl;
+std::cout << Literal("Subiendo temperatura") << std::endl;
 }
 
 int opcion = 2;
 switch (opcion) {
 case 1:
-std::cout << "Opcion 1 seleccionada" << std::endl;
+std::cout << Literal("Opcion 1 seleccionada") << std::endl;
 break;
 
 case 2:
-std::cout << "Opcion 2 seleccionada" << std::endl;
+std::cout << Literal("Opcion 2 seleccionada") << std::endl;
 break;
 
 default:
-std::cout << "Opcion desconocida" << std::endl;
+std::cout << Literal("Opcion desconocida") << std::endl;
 break;
 }
 
-std::cout << "Prueba finalizada exitosamente." << std::endl;
+std::cout << Literal("Prueba finalizada exitosamente.") << std::endl;
 return 0;
 }
 
