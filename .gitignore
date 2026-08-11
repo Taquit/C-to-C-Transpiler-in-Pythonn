@@ -5,3 +5,4 @@ __pycache__/
 /data/c#_code.txt
 GUIA_SEMANTICA.md
 data/c++_code.txt
+*.md
